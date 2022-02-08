@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
   try {
     userInputs = await userSchema.validateAsync(userInputs);
   } catch (err) {
-    res.status(400).send({ err: 'Incorrect data provided' });
+    return res.status(400).send(err.message + '. Please try again.');
   }
 
   const encryptedPassword = bcrypt.hashSync(userInputs.password);
@@ -32,7 +32,6 @@ router.post('/register', async (req, res) => {
     await con.end();
     return res.send(data);
   } catch (err) {
-    console.log(err);
     return res.status(500).send({ err });
   }
 });
@@ -65,7 +64,7 @@ router.post('/login', async (req, res) => {
     );
 
     return validatePassword
-      ? res.send(token)
+      ? res.send({ msg: 'Success', token })
       : res.status(400).send('Incorrect email or password');
   } catch (err) {
     console.log(err);

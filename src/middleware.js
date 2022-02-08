@@ -1,4 +1,4 @@
-const jwt = requie('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
   isLoggedIn: (req, res, next) => {
