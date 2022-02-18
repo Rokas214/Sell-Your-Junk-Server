@@ -5,12 +5,12 @@ const { isLoggedIn } = require('../../middleware');
 const mysql = require('mysql2/promise');
 const { dbConfig } = require('../../config');
 
-router.get('/', isLoggedIn, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const con = await mysql.createConnection(dbConfig);
-    const [data] = await con.execute(` 
+    const [data] = await con.execute(`
     SELECT * FROM product
-    WHERE user_email=('${req.headers.email}') `);
+    WHERE id=('${req.headers.id}') `);
     await con.end();
     return res.send(data);
   } catch (err) {
@@ -19,19 +19,8 @@ router.get('/', isLoggedIn, async (req, res) => {
   }
 });
 
-router.post('/del', async (req, res) => {
-  try {
-    const con = await mysql.createConnection(dbConfig);
-    const data = con.execute(`
-        DELETE FROM product
-        WHERE id=('${req.body.id}')
-        `);
-    await con.end();
-
-    return res.send(data);
-  } catch (err) {
-    return res.status(500).send({ err });
-  }
-});
+// router.get('/', (req, res) => {
+//   res.send('hello');
+// });
 
 module.exports = router;

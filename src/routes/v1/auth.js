@@ -9,25 +9,37 @@ const router = express.Router();
 
 const userSchema = Joi.object({
   email: Joi.string().email().trim().lowercase().required(),
+  passwordOne: Joi.string().min(6).max(255).required(),
+  passwordTwo: Joi.string().min(6).max(255).required(),
+  username: Joi.string().min(1).max(255).required(),
+});
+const userSchemaLogin = Joi.object({
+  email: Joi.string().email().trim().lowercase().required(),
   password: Joi.string().min(6).max(255).required(),
 });
 
 router.post('/register', async (req, res) => {
   let userInputs = req.body;
+
+  if (userInputs.passwordOne !== userInputs.passwordTwo) {
+    return res.send('Passwords must match!');
+  }
+
   try {
     userInputs = await userSchema.validateAsync(userInputs);
   } catch (err) {
     return res.status(400).send(err.message + '. Please try again.');
   }
 
-  const encryptedPassword = bcrypt.hashSync(userInputs.password);
+  const encryptedPassword = bcrypt.hashSync(userInputs.passwordOne);
 
   try {
     const con = await mysql.createConnection(dbConfig);
     const [data] = await con.execute(`
-      INSERT INTO users (email,password)
-      VALUES (${mysql.escape(userInputs.email)}, '${encryptedPassword}')
-      `);
+      INSERT INTO users (email,password,username)
+      VALUES (${mysql.escape(userInputs.email)}, '${encryptedPassword}', '${
+      userInputs.username
+    }')`);
 
     await con.end();
     return res.send(data);
@@ -39,7 +51,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   let userInputs = req.body;
   try {
-    userInputs = await userSchema.validateAsync(userInputs);
+    userInputs = await userSchemaLogin.validateAsync(userInputs);
   } catch (err) {
     res.status(400).send({ err: 'Incorrect email or password' });
   }
