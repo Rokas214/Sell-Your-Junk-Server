@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
   try {
     userInputs = await userSchema.validateAsync(userInputs);
   } catch (err) {
-    return res.status(400).send(err.message + '. Please try again.');
+    return res.status(400).send({ err });
   }
 
   const encryptedPassword = bcrypt.hashSync(userInputs.passwordOne);
