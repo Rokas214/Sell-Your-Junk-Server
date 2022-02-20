@@ -1,6 +1,6 @@
 # Introduction
 
-My project is website, where you can upload your item's for sell. You can upload, delete, edit or read all product's that you uploaded. Or see product's uploaded by other people.
+My project is website, where you can upload your item's for sell. You can upload, delete, edit or read all product's that you uploaded. Or see product's uploaded by other people. In this Project I used Node JS, React, and MYSQL database with DigitalOcean
 
 # Getting Started
 
